@@ -1,69 +1,73 @@
+@use '../../../styles/_tokens.scss' as *;
+
 .page {
   padding: 24px 32px;
 }
 
 .page-header {
   display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 
   h1 {
     margin: 0;
     font-size: 24px;
     font-weight: 600;
-    color: #0f172a;
+    color: $text-label;
   }
 }
 
 .timeline {
   display: flex;
-  border-top: 1px solid #f0f1f5;
+  border-top: 1px solid $stroke-2;
 }
 
 .timeline-left {
-  width: 280px;
-  border-right: 1px solid #f0f1f5;
-  background: #fff;
+  width: $left-panel-width;
+  border-right: 1px solid $stroke-2;
+  background: $bg-surface;
 
   .left-header {
-    height: 48px;
+    height: $header-height;
     display: flex;
     align-items: center;
     padding: 0 16px;
     font-size: 13px;
-    color: #687196;
-    border-bottom: 1px solid #f0f1f5;
+    color: $text-label;
+    border-bottom: 1px solid $stroke-2;
   }
 
   .left-row {
-    height: 56px;
+    height: $row-height;
     display: flex;
     align-items: center;
     padding: 0 16px;
     font-size: 14px;
-    color: #0f172a;
-    border-bottom: 1px solid #f0f1f5;
+    color: $text-label;
+    border-bottom: 1px solid $stroke-2;
   }
 }
 
 .timeline-right {
+  position: relative;
   flex: 1;
   overflow-x: auto;
-  background: #f8fafc;
+  background: $bg-surface;
 
   .right-header {
     position: sticky;
     top: 0;
-    background: #f8fafc;
-    border-bottom: 1px solid #f0f1f5;
+    background: $bg-surface;
+    border-bottom: 1px solid $stroke-2;
+    z-index: 3;
   }
 
   .header-grid {
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: 160px;
-    height: 48px;
+    height: $header-height;
   }
 
   .header-cell {
@@ -71,27 +75,57 @@
     align-items: center;
     justify-content: center;
     font-size: 13px;
-    color: #687196;
-    border-left: 1px solid #f0f1f5;
+    color: $text-label;
+    border-left: none;
+    white-space: nowrap;
+    padding: 0 8px;
   }
 
   .row {
-    height: 56px;
-    border-bottom: 1px solid #f0f1f5;
+    height: $row-height;
+    border-bottom: 1px solid $stroke-2;
 
     &:hover {
-      background: rgba(170, 175, 255, 0.18);
+      cursor: progress;
     }
   }
 
   .row-grid {
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: 160px;
     height: 100%;
   }
 
   .cell {
-    border-left: 1px solid #f0f1f5;
+    border-left: 1px solid $stroke-2;
+  }
+
+  /* Vertical current indicator line */
+  .current-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: $primary-soft; // subtle line color from design
+    transform: translateX(-1px); // center on the pixel
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* Header pill label above the line */
+  .current-pill {
+    position: absolute;
+    transform: translateX(10%);
+    padding: 2px 4px;
+    border-radius: $radius-sm;
+    font-size: 12px;
+    font-weight: 400;
+    color: $primary;
+    background: $primary-soft;
+    box-shadow: $shadow-50-08;
+    z-index: 4;
+    pointer-events: none;
+    white-space: nowrap;
+    max-height: 22px;;
   }
 }

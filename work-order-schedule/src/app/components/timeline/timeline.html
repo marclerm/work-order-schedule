@@ -1,7 +1,10 @@
 <div class="page">
     <header class="page-header mb-2">
         <h1>Work Orders</h1>
-        <app-timescale-selector [(value)]="timeScale"></app-timescale-selector>
+        <app-timescale-selector 
+        [(value)]="timeScale"
+        (valueChange)="onTimeScaleChange($event)">
+        </app-timescale-selector>
     </header>
 
     <section class="timeline">
@@ -12,10 +15,41 @@
             </div>
         </div>
 
-        <div class="timeline-right">
+        <div class="timeline-right" #scrollElement>
             <div class="right-header">
-                <div class="header-grid">
-                    <div class="header-cell" *ngFor="let month of monthColumns">{{ month }}</div>
+                <!-- Headers of timeline here, e.g. Jan, Feb, Week 1, Week 2, Day 1, Day 2, etc. -->
+                <div class="header-grid"
+                    [style.gridAutoColumns.px]="columnWidthPx()">
+                    <div class="header-cell" 
+                        *ngFor="let c of columns(); trackBy: trackByColumnKey">
+                        {{ c.label }}
+                    </div>
+                </div>
+
+                <!-- Current label pill below the column header -->
+                <div class="current-pill"
+                    *ngIf="currentColumnIndex() >= 0"
+                    [style.left.px]="currentLineLeftPx()">
+                    {{ currentLabel() }}
+                </div>
+            </div>
+
+            <!-- Current vertical line -->
+             <div class="current-line"
+             *ngIf="currentColumnIndex() >= 0"
+             [style.left.px]="currentLineLeftPx()">
+                <!-- No value, just draw the line -->
+            </div>
+
+            <div class="rows">
+                <div class="row" *ngFor="let workCenter of workCenters">
+                    <div class="row-grid"
+                        [style.gridAutoColumns.px]="columnWidthPx()">
+                        <div class="cell" 
+                            *ngFor="let c of columns(); trackBy: trackByColumnKey">
+                            <!-- Cells of timeline here, e.g. work orders, empty slots, etc. -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,0 +1,117 @@
+@use '../../../styles/_tokens.scss' as *;
+
+.scale {
+  display: inline-flex;
+  align-items: center;
+  box-shadow: $shadow-50-08;
+  border-radius: $radius-sm;
+
+  .label {
+    width: 72px;
+    height: 30px;
+    border-radius: 5px 0px 0px 5px;
+    background-color: #f1f3f8bf;
+    font-size: 13px;
+    color: $text-label;
+    padding: 5px 5px;
+  }
+
+  .btn-scale {
+    padding: 0 10px;
+    width: 71px;
+    height: 30px;
+    border-radius: 0px 5px 5px 0px;
+    background: #fff;
+    font-size: 13px;
+    color: $primary-shade2;
+    display: inline-flex;
+    align-items: center;
+    border: none;
+  }
+ 
+}
+
+:host ::ng-deep .scale-select {
+
+    /* ================================
+    ng-select dropdown (Sketch style)
+    ================================ */
+
+    .ng-dropdown-panel {
+    border: none;
+    border-radius: $radius-menu;
+    box-shadow: $shadow-dropdown;
+    min-width: 180px;
+    overflow: hidden;
+    color: $primary !important;
+    }
+
+    .selected-label {
+    color: $primary !important;
+    font-size: 13px;
+    }
+
+    .ng-dropdown-panel .ng-dropdown-panel-items {
+    padding: 0; /* keep clean like bootstrap menu */
+    }
+
+    .ng-dropdown-panel .ng-option {
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 8px 10px;
+    color: $text-label;
+    background: transparent;
+    }
+
+    .ng-dropdown-panel .ng-option.ng-option-marked {
+    background: transparent;
+    }
+
+    .ng-dropdown-panel .ng-option.ng-option-selected {
+    background: transparent !important;
+    color: $primary !important;
+    }
+
+    .ng-dropdown-panel .ng-option.ng-option-selected.ng-option-marked {
+    background: transparent !important;
+    color: $primary !important;
+    }
+
+    .ng-dropdown-panel .ng-option:focus {
+    outline: none;
+    }
+
+  .ng-select-container {
+    height: 30px !important;
+    min-height: 30px !important; /* Force min-height override */
+    border: none !important;
+    box-shadow: none !important; // ng-select often has a default shadow on focus
+    background: transparent !important;
+    align-items: center;
+  }
+
+  .ng-select .ng-select-container .ng-value-container {
+    height: 30px !important;
+    align-items: center;
+    display: flex;
+  }
+
+  .ng-select .ng-select-container .ng-value-container .ng-value {
+    line-height: 30px !important;
+    font-size: 13px;
+  }
+
+  .ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
+    top: 0 !important;
+    height: 30px !important;
+  }
+
+  .ng-select .ng-select-container .ng-arrow-wrapper,
+  .ng-select .ng-select-container .ng-clear-wrapper {
+    height: 30px !important;
+    align-self: center;
+    display: flex;
+    align-items: center;
+  }
+  
+}

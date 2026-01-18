@@ -1,0 +1,41 @@
+<div class="scale">
+    <span class="label">Timescale</span>
+
+    <ng-select 
+        class="scale-select"
+        [items]="options"
+        bindLabel="label"
+        bindValue="value"
+        [clearable]="false"
+        [searchable]="false"
+        [ngModel]="value"
+        (change)="onChange($event.value)">
+
+        <ng-template ng-label-tmp let-item="item">
+            <span class="selected-label">{{ item?.label }}</span>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item" let-index="index">
+            <span class="option-label"
+                [class.is-selected]="item.value === value">
+                {{ item.label }}
+            </span>
+        </ng-template>
+    </ng-select>
+
+    <!-- <div ngbDropdown class="dropdown">
+        <button ngbDropdownToggle class="btn-scale" type="button">
+            {{ value | titlecase }}
+        </button>
+
+        <div ngbDropdownMenu>
+            <button
+                ngbDropdownItem
+                *ngFor="let opt of options"
+                (click)="select(opt.value)"
+                [class.active]="opt.value === value">
+                {{ opt.label }}
+            </button>
+        </div>
+    </div> -->
+</div>

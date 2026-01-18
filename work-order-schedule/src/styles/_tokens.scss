@@ -1,0 +1,54 @@
+/* =========================
+   COLORS (from Sketch)
+   ========================= */
+
+/* Primary */
+$primary: #5659ff;
+$primary-soft: #aaafff;
+$primary-shade2: #3e40db;
+
+/* Text */
+$text-label: #687196;
+$text-disabled: #d8dceb;
+
+/* Strokes / borders */
+$stroke-2: #f0f1f5;
+
+
+/* =========================
+   SHADOWS (from Sketch)
+   ========================= */
+
+
+$shadow-50-08: 0 1px 0.8px rgba(0, 0, 0, 0.1);
+
+/* =========================
+   RADII / SIZES
+   ========================= */
+$radius-sm: 5px;
+$radius-md: 8px;
+
+$left-panel-width: 280px;
+$row-height: 56px;
+$header-height: 48px;
+$month-col-width: 160px;
+
+/* Dropdown/menu shadow (from Sketch “Copy CSS”) */
+$shadow-dropdown:
+  0 0 1px rgba(104, 113, 150, 0.1),
+  0 2.5px 3px -1.5px rgba(200, 207, 233, 1),
+  0 4.5px 5px -1px rgba(216, 220, 235, 1);
+
+/* Menu radius from Sketch */
+$radius-menu: 5px;
+
+
+:root {
+  --primary: #{$primary};
+  --primary-soft: #{$primary-soft};
+  --primary-shade2: #{$primary-shade2};
+  --text-label: #{$text-label};
+  --text-disabled: #{$text-disabled};
+  --stroke-2: #{$stroke-2};
+  --shadow-50-08: #{$shadow-50-08};
+}

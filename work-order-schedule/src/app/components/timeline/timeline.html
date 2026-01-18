@@ -1,0 +1,23 @@
+<div class="page">
+    <header class="page-header mb-2">
+        <h1>Work Orders</h1>
+        <app-timescale-selector [(value)]="timeScale"></app-timescale-selector>
+    </header>
+
+    <section class="timeline">
+        <div class="timeline-left">
+            <div class="left-header">Work Center</div>
+            <div class="left-row" *ngFor="let workCenter of workCenters">
+                {{ workCenter.data.name }}
+            </div>
+        </div>
+
+        <div class="timeline-right">
+            <div class="right-header">
+                <div class="header-grid">
+                    <div class="header-cell" *ngFor="let month of monthColumns">{{ month }}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, signal, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, computed, signal, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { TimescaleSelector } from '../timescale-selector/timescale-selector';
 import { Timescale } from '../../models/timeline.types';
-import { WORK_CENTERS } from '../../data/sample-data';
+import { MOCKED_WORK_CENTERS, MOCKED_WORK_ORDERS } from '../../data/sample-data';
 import { buildColumnRanges, TimelineColumnRange } from '../../utils/timeline-range';
+import { getTimelinePosition } from '../../utils/timeline-position';
+import { WorkOrder } from '../../models/work-order.model';
 
 @Component({
   selector: 'app-timeline',
@@ -15,9 +17,13 @@ import { buildColumnRanges, TimelineColumnRange } from '../../utils/timeline-ran
 export class Timeline implements AfterViewInit {
   // Props
   timeScale = signal<Timescale>('month');
-  workCenters = WORK_CENTERS;
+  workCenters = MOCKED_WORK_CENTERS;
+  workOrders = MOCKED_WORK_ORDERS
   monthColumns = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   today = new Date();
+
+  //hoveredWorkOrderId: string | null = null;
+  openMenuWorkOrderId: string | null = null;
 
   // Elements
   @ViewChild('scrollElement', { static: true }) scrollElement!: ElementRef<HTMLDivElement>;
@@ -101,10 +107,84 @@ export class Timeline implements AfterViewInit {
   }
   //#endregion
 
+  //#region Work Order positioning
+
+    workOrdesByCenter = computed(() => {
+    const map = new Map<string, typeof MOCKED_WORK_ORDERS>();
+    for(const wo of this.workOrders) {
+      const wcId = wo.data.workCenterId;
+      if(!map.has(wcId)) {
+        map.set(wcId, []);
+      }
+      map.get(wcId)!.push(wo);
+    }
+    return map;
+  });
+
+  getWorkOrdersBarsOf(workCenterId: string) {
+    const cols = this.columns();
+    const colWidth = this.columnWidthPx();
+    const workOrders = this.workOrdesByCenter().get(workCenterId) || [];
+
+    const bars = workOrders.map(wo => {
+      const position = getTimelinePosition({
+        columns: cols,
+        colWidthPx: colWidth,
+        startIso: wo.data.startDate,
+        endIso: wo.data.endDate,
+      });
+
+      if(!position) 
+        return null;
+
+      return {wo, ...position};
+    }).filter(bar => bar !== null) as Array<{wo: WorkOrder, leftPx: number, widthPx: number}>;
+
+    return bars;
+  }
+  //#endregion
+
   //#region Lifecycle hooks
   ngAfterViewInit(): void {
     // Initial scroll to current time indicator
     queueMicrotask(() => this.scrollToCurrent());
+  }
+  //#endregion
+
+  //#region Mouse and Menu handling
+
+  toggleMenu(id: string, ev: MouseEvent){
+    console.log("menu toggled, id: "+ id);
+    ev.stopPropagation();
+    ev.preventDefault();
+    this.openMenuWorkOrderId = this.openMenuWorkOrderId === id ? null : id;
+    
+  }
+
+  closeMenu(){
+    this.openMenuWorkOrderId = null;
+  }
+
+  @HostListener('document:click')
+  onDocumentClick() {
+    this.closeMenu();
+  }
+
+  onMenuClick(ev: MouseEvent) {
+    ev.stopPropagation(); // don’t close when clicking inside menu
+  }
+
+  onEdit(id: string, ev: MouseEvent) {
+    ev.stopPropagation();
+    console.log('Edit', id);
+    this.closeMenu();
+  }
+
+  onDelete(id: string, ev: MouseEvent) {
+    ev.stopPropagation();
+    // TODO: confirm + remove
+    console.log('Delete', id);
+    this.closeMenu();
   }
   //#endregion
 }

@@ -1,4 +1,3 @@
-import { time } from "console";
 import { Timescale } from "../models/timeline.types";
 
 export type TimelineColumnRange = {
@@ -64,11 +63,11 @@ export function buildColumnRanges(timescale: Timescale, anchor = new Date()): Ti
 
      if(timescale === 'month') {
         const start = addMonths(startOfMonth(today), -2);
-        const count = 9; // 9 months total (2 back + current + 6 forward = 9)
+        const count = 14; // 14 months total (2 back + current + 11 forward = 14) eaquls almost 1 year
 
         return Array.from({ length: count }).map((_, i) => {
             const s = addMonths(start, i);
-            const e = addMonths(s, i+1);
+            const e = addMonths(s, 1);
             const label = formatMonth(s);
             return {
                 key: `${s.getFullYear()}-${s.getMonth() + 1}`,
@@ -80,7 +79,7 @@ export function buildColumnRanges(timescale: Timescale, anchor = new Date()): Ti
      }
      else if(timescale === 'week') {
         const start = addDays(startOfWeekMonday(today), -14); // 2 weeks back
-        const count = 13; // 13 weeks total (2 back + current + 10 forward = 13)
+        const count = 55; // 54 weeks total (2 back + current + 52 forward = 54) equals almost 1 year
         
         return Array.from({ length: count }).map((_, i) => {
             const s = addDays(start, i * 7);
@@ -95,7 +94,7 @@ export function buildColumnRanges(timescale: Timescale, anchor = new Date()): Ti
         });
      }    else { // day
         const start = addDays(today, -14); // 14 days back
-        const count = 57; // 57 days total (14 back + current + 42 forward = 57)
+        const count = 382; // (14 back + current + 367 forward = 382) equals almost 1 year
 
         return Array.from({ length: count }).map((_, i) => {
             const s = addDays(start, i);

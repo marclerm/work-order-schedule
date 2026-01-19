@@ -47,9 +47,49 @@
                         [style.gridAutoColumns.px]="columnWidthPx()">
                         <div class="cell" 
                             *ngFor="let c of columns(); trackBy: trackByColumnKey">
-                            <!-- Cells of timeline here, e.g. work orders, empty slots, etc. -->
                         </div>
                     </div>
+
+                    <!-- Draw bars from work orders  -->
+                     <div class="bars">
+                        <div class="bar"
+    *ngFor="let b of getWorkOrdersBarsOf(workCenter.docId)"
+    [style.left.px]="b.leftPx"
+    [style.width.px]="b.widthPx"
+    [attr.data-status]="b.wo.data.status"
+    [class.has-open-menu]="openMenuWorkOrderId === b.wo.docId"
+    title="{{b.wo.data.name}}">
+    <span class="bar-title">{{b.wo.data.name}}</span>
+
+    <!-- Always rendered, shown via CSS -->
+    <button
+        type="button"
+        class="bar-cta"
+        (click)="toggleMenu(b.wo.docId, $event)"
+        aria-label="Options">
+        <span class="kebab">⋮</span>
+    </button>
+
+    <div 
+        class="bar-menu"
+        *ngIf="openMenuWorkOrderId === b.wo.docId"
+        (click)="onMenuClick($event)">
+        <button 
+            type="button" 
+            class="menu-item" 
+            (click)="onEdit(b.wo.docId, $event)">
+            Edit
+        </button>
+
+        <button 
+            type="button" 
+            class="menu-item is-danger" 
+            (click)="onDelete(b.wo.docId, $event)">
+            Delete
+        </button>
+    </div>
+</div>
+                     </div>
                 </div>
             </div>
         </div>

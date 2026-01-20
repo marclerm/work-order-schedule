@@ -11,17 +11,7 @@ export const MOCKED_WORK_CENTERS: WorkCenterDocument[] = [
 
 
 export const MOCKED_WORK_ORDERS: WorkOrder[] = [
-  {
-    docId: 'WO-002',
-    docType: 'workOrder',
-    data: {
-        workCenterId: 'wc-cnc-1',
-        name: 'Reprogram CNC Machine',
-        startDate: '2026-02-05',  
-        endDate: '2026-03-28',
-        status: 'in-progress'
-    }
-  },
+  // Extrusion Line A
   {
     docId: 'WO-003',
     docType: 'workOrder',
@@ -34,14 +24,109 @@ export const MOCKED_WORK_ORDERS: WorkOrder[] = [
     }
   },
   {
+    docId: 'WO-007',
+    docType: 'workOrder',
+    data: {
+        workCenterId: 'wc-extrusion-a',
+        name: 'Replace Drive Motor',
+        startDate: '2026-01-15',
+        endDate: '2026-02-10',
+        status: 'in-progress'
+    }
+  },
+
+  // CNC Machine 1
+  {
+    docId: 'WO-002',
+    docType: 'workOrder',
+    data: {
+        workCenterId: 'wc-cnc-1',
+        name: 'Reprogram CNC Machine',
+        startDate: '2026-01-05',  
+        endDate: '2026-01-28',
+        status: 'in-progress'
+    }
+  },
+  {
+    docId: 'WO-010',
+    docType: 'workOrder',
+    data: {
+        workCenterId: 'wc-cnc-1',
+        name: 'Replace Tool Holders',
+        startDate: '2026-02-01',
+        endDate: '2026-03-04',
+        status: 'open'
+    }
+  },
+  {
+    docId: 'WO-012',
+    docType: 'workOrder',
+    data: {
+        workCenterId: 'wc-cnc-1',
+        name: 'Software Update',
+        startDate: '2026-03-05',
+        endDate: '2026-04-10',
+        status: 'blocked'
+    }
+  },
+
+  // Assembly Station
+  {
+    docId: 'WO-006',
+    docType: 'workOrder',
+    data: {
+        workCenterId: 'wc-assembly',
+        name: 'Replace Worn Gears',
+        startDate: '2026-01-10',
+        endDate: '2026-02-05',
+        status: 'completed'
+    }
+  },
+  {
+    docId: 'WO-013',
+    docType: 'workOrder',
+    data: {
+        workCenterId: 'wc-assembly',
+        name: 'Install New Workbench',
+        startDate: '2026-02-07',
+        endDate: '2026-03-20',
+        status: 'in-progress'
+    }
+  },
+  // Quality Control
+  {
+    docId: 'WO-017',
+    docType: 'workOrder',
+    data: {
+        workCenterId: 'wc-qc',
+        name: 'Calibrate Measurement Tools',
+        startDate: '2026-01-22',
+        endDate: '2026-02-10',
+        status: 'in-progress'
+    }
+  },
+  {
+    docId: 'WO-019',
+    docType: 'workOrder',
+    data: {
+        workCenterId: 'wc-qc',
+        name: 'Update QC Procedures',
+        startDate: '2026-03-03',
+        endDate: '2026-03-30',
+        status: 'open'
+    }
+  },
+
+  // Packaging Line
+  {
     docId: 'WO-004',
     docType: 'workOrder',
     data: {
         workCenterId: 'wc-packaging',
         name: 'Calibrate Weighing Scales',
-        startDate: '2026-02-05',  
-        endDate: '2026-03-20',
-        status: 'open'
+        startDate: '2026-01-05',  
+        endDate: '2026-01-25',
+        status: 'completed'
     }
   },
   {
@@ -50,31 +135,20 @@ export const MOCKED_WORK_ORDERS: WorkOrder[] = [
     data: {
         workCenterId: 'wc-packaging',
         name: 'Lubricate Moving Parts',
-        startDate: '2026-04-02',
-        endDate: '2026-05-03',
+        startDate: '2026-02-11',
+        endDate: '2026-03-13',
         status: 'open'
     }
   },
   {
-    docId: 'WO-006',
+    docId: 'WO-022',
     docType: 'workOrder',
     data: {
-        workCenterId: 'wc-assembly',
-        name: 'Replace Worn Gears',
-        startDate: '2026-02-10',
-        endDate: '2026-03-17',
+        workCenterId: 'wc-packaging',
+        name: 'Test Automated Sealer',
+        startDate: '2026-03-20',
+        endDate: '2026-04-05',
         status: 'blocked'
-    }
-  },
-  {
-    docId: 'WO-015',
-    docType: 'workOrder',
-    data: {
-        workCenterId: 'wc-qc',
-        name: 'Quality Check Batch #42',
-        startDate: '2026-01-01',  
-        endDate: '2026-02-25',
-        status: 'completed'
     }
   }
 ];

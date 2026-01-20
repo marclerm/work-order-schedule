@@ -1,59 +1,121 @@
-# WorkOrderSchedule
+# Work Order Schedule
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.0.
+A modern, interactive scheduling application built with **Angular 21** that provides timeline-based visualization and management of work orders across multiple work centers.
 
-## Development server
+## Overview
 
-To start a local development server, run:
+This project delivers a robust and intuitive scheduling experience with a strong focus on usability, visual clarity, and reactive state management.
 
+Key capabilities include:
+
+- **Timeline Visualization** – View work orders across day, week, and month timescales  
+- **Interactive Gantt-Style Timeline** – Select date ranges directly on the timeline to create work orders  
+- **Full CRUD Support** – Create, edit, and delete work orders using a slide-out form  
+- **Status Management** – Track work orders through open, in-progress, completed, and blocked states  
+- **Real-Time UI Updates** – Built with Angular Signals for instant, reactive visual feedback  
+- **Responsive & Modern UI** – Clean layout with hover interactions, contextual menus, and visual indicators  
+
+## Features
+
+### Timeline Navigation
+- Switch seamlessly between **day**, **week**, and **month** views  
+- Automatically scrolls to the current date indicator  
+- Horizontal scrolling for extended timelines  
+
+### Work Order Management
+- Click empty timeline cells to select a date range  
+- Clear visual feedback with a **“Click to add dates”** action pill  
+- Form-based data entry with date pickers and status selector  
+- Edit existing work orders via contextual three-dot menu  
+- Delete work orders with confirmation dialog  
+
+### Visual Indicators
+- Color-coded status pills on each work order bar  
+- Current day / week / month indicator line  
+- Hover effects and interactive controls 
+
+## Tech Stack
+
+- **Angular 21** (Standalone components, Signals)  
+- **TypeScript**  
+- **SCSS** with custom design tokens
+- **ng-select** for dropdowns  
+- **Angular Signals** for reactive state management  
+
+## Getting Started
+
+### Prerequisites
+- Node.js **24+**  
+- npm  
+- Angular CLI  
+  ```bash
+  npm install -g @angular/cli
+  ```
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd work-order-schedule
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Run the development server:
+   ```bash
+   ng serve
+   ```
+
+4. Open your browser at:
+   ```
+   http://localhost:4200
+   ```
+
+### Build for Production
 ```bash
-ng serve
+ng build --configuration production
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Production artifacts will be generated in the `dist/` directory.
 
-## Code scaffolding
+## Project Structure
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```
+src/app/
+├── components/
+│   ├── timeline/               # Main timeline & grid rendering
+│   ├── work-order-form/        # Create/edit form drawer
+│   └── timescale-selector/     # Day / week / month toggle
+├── models/                     # TypeScript interfaces & enums
+├── utils/                      # Timeline calculations & helpers
+├── data/                       # Mock data
+└── styles/                     # Global SCSS tokens
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Usage
 
-```bash
-ng generate --help
-```
+### Creating a Work Order
+1. Click an empty cell within a work center row  
+2. Click additional cells to extend the date range  
+3. Click the **“Click to add dates”** pill  
+4. Fill in the work order details and click **Create**  
 
-## Building
+### Editing a Work Order
+1. Hover over an existing work order bar  
+2. Click the three-dot menu  
+3. Select **Edit**  
+4. Modify details and click **Save**  
 
-To build the project run:
+### Deleting a Work Order
+1. Open the three-dot menu on a work order  
+2. Click **Delete**  
+3. Confirm the action in the dialog  
 
-```bash
-ng build
-```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## License
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+MIT

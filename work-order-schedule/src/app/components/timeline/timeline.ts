@@ -238,6 +238,26 @@ export class Timeline implements AfterViewInit {
       return;
     }
 
+    const wcId = this.selectedWorkCenterId ?? this.workCenters[0]?.docId;
+
+    const conflict = this.checkOverlap(
+      wcId,
+      v.start,
+      v.end,
+      mode === 'edit' ? editing ?? undefined : undefined
+    );
+
+    if (conflict) {
+      alert(
+        `Date conflict detected!\n\n` +
+        `The selected dates overlap with:\n` +
+        `"${conflict.data.name}"\n` +
+        `(${conflict.data.startDate} to ${conflict.data.endDate})\n\n` +
+        `Please adjust the dates to resolve the conflict.`
+      );
+      return;
+    }
+
     if (mode === 'edit' && editing) {
       this.workOrders.set(this.workOrders().map(w =>
         w.docId === editing
@@ -255,7 +275,7 @@ export class Timeline implements AfterViewInit {
       ));
     } else {
       
-      const wcId = this.selectedWorkCenterId ?? this.workCenters[0]?.docId;
+      
 
       const newId = `WO-${Math.random().toString(16).slice(2, 6)}`;
 
@@ -277,6 +297,32 @@ export class Timeline implements AfterViewInit {
     this.selectedWorkCenterId = null;
     this.formOpen.set(false);
   }
+
+  checkOverlap(
+    workCenterId: string,
+    startDate?: string,
+    endDate?: string,
+    excludeId?: string
+  ): WorkOrder | null {
+    const workOrders = this.workOrders().filter(
+      wo => wo.data.workCenterId === workCenterId && wo.docId !== excludeId
+    );
+
+    if(!startDate || ! endDate)
+        return null;
+      
+    for (const wo of workOrders) {
+      const existingStart = wo.data.startDate;
+      const existingEnd = wo.data.endDate;
+
+      if (startDate < existingEnd && endDate > existingStart) {
+        return wo;
+      }
+    }
+
+    return null; // No overlap found
+  }
+
 
 
   getStatusLabel(status: string): string {

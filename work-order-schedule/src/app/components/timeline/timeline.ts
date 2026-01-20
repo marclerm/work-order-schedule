@@ -15,6 +15,9 @@ import { WorkOrderForm } from '../work-order-form/work-order-form';
   templateUrl: './timeline.html',
   styleUrls: ['./timeline.scss'],
 })
+
+// @upgrade add more zoom leves and export graph some way like picture or excel file
+
 export class Timeline implements AfterViewInit {
   // Props
   timeScale = signal<Timescale>('month');
@@ -229,6 +232,7 @@ export class Timeline implements AfterViewInit {
     this.closeMenu();
   }
 
+  // @upgrade maybe create recurrent work orders daily, weekly or monthly
   onFormSubmit(v: { name: string; status: any; start?: string; end?: string }) {
     const mode = this.formMode();
     const editing = this.editingId();
@@ -310,7 +314,7 @@ export class Timeline implements AfterViewInit {
 
     if(!startDate || ! endDate)
         return null;
-      
+
     for (const wo of workOrders) {
       const existingStart = wo.data.startDate;
       const existingEnd = wo.data.endDate;

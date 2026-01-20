@@ -58,6 +58,7 @@ function formatDayLabel(date: Date): string {
     return `${m} ${day}`;
 }
 
+// @upgrade calculate the anchor based on the minimum start date in the list and the maximum end date to keep focused only in real dates
 export function buildColumnRanges(timescale: Timescale, anchor = new Date()): TimelineColumnRange[] {
      const today = startOfDay(anchor);
 

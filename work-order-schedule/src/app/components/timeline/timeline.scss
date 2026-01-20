@@ -90,7 +90,9 @@
     &:hover {
       background: rgba(170, 175, 255, 0.18);
       z-index: 1;
+      cursor: pointer;
     }
+
   }
 
   .row-grid {
@@ -149,7 +151,7 @@
 .bar {
   position: absolute;
   height: 28px;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 0 10px;
   display: flex;
   align-items: center;
@@ -173,6 +175,37 @@
     pointer-events: none;
   }
 
+  .bar-status {
+    flex: 0 0 auto;
+    padding: 4px;
+    border-radius: $radius-sm;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    
+    // Different colors based on status
+    &[data-status="open"] {
+      background: $bg-open;
+      color: $text-open;
+    }
+    
+    &[data-status="in-progress"] {
+      background: $bg-inprogress;
+      color: $text-inprogress;
+    }
+    
+    &[data-status="completed"] {
+      background: $bg-complete;
+      color: $text-complete;
+    }
+    
+    &[data-status="blocked"] {
+      background: $bg-blocked;
+      color: $text-blocked;
+    }
+  }
+
   &:hover {
     filter: brightness(0.98);
     z-index: 2;
@@ -182,7 +215,7 @@
     z-index: 999;
   }
 
-  &[data-status="open"]   { background: $primary; }
+  &[data-status="open"]   { background: rgba(218, 243, 245, 1); }
   &[data-status="in-progress"]  { background: $primary-soft; }
   &[data-status="completed"]    { background: rgba(209, 250, 179, 1); }
   &[data-status="blocked"] { background: rgba(255, 245, 207, 1); }
@@ -209,7 +242,7 @@
       background: rgba(255, 255, 255, 0.75);
     }
 
-    .kebab {
+    .dots-menu {
       font-size: 18px;
       line-height: 1;
       transform: translateY(-1px);
@@ -258,5 +291,45 @@
     &.is-danger {
       color: $primary;
     }
+  }
+}
+
+.pending-create-area {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  cursor: pointer;
+  z-index: 15;
+  pointer-events: auto;
+
+  .add-dates-tooltip {
+    position: absolute;
+    bottom: calc(85%);
+    left: 50%;
+    transform: translateX(-50%);
+    height: 26px;
+    padding: 4px;
+    border-radius: $radius-sm;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    white-space: nowrap;
+    background: rgba(104, 113, 150, 1);
+    color: rgba(249, 250, 255, 1);
+    box-shadow: $shadow-50-08;
+  }
+
+  .selection-highlight {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    right: 0;
+    height: 28px;
+    border-radius: 8px;
+    background: $primary-soft;
+    border: 1px solid $primary;
+    pointer-events: none;
   }
 }

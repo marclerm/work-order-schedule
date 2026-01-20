@@ -14,6 +14,17 @@ $text-label: #687196;
 $text-disabled: #d8dceb;
 $text-title: #030929;
 
+/* Pills styles */
+$bg-open: rgba(228, 253, 255, 1);
+$bg-inprogress: rgba(214, 216, 255, 1);
+$bg-complete: rgba(225, 255, 204, 1);
+$bg-blocked: rgba(252, 238, 181, 1);
+
+$text-open: rgba(0, 176, 191, 1);
+$text-inprogress: rgba(62, 64, 219, 1);
+$text-complete: rgba(8, 162, 104, 1);
+$text-blocked: rgba(177, 54, 0, 1);
+
 /* Strokes / borders */
 $stroke-2: #f0f1f5;
 

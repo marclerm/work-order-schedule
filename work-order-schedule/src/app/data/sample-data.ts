@@ -73,7 +73,7 @@ export const MOCKED_WORK_ORDERS: WorkOrder[] = [
         workCenterId: 'wc-qc',
         name: 'Quality Check Batch #42',
         startDate: '2026-01-01',  
-        endDate: '2026-01-25',
+        endDate: '2026-02-25',
         status: 'completed'
     }
   }

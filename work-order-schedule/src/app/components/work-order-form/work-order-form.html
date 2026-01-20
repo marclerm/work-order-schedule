@@ -1,0 +1,77 @@
+<div class="drawer" [class.is-open]="isOpen">
+  <div class="drawer-header">
+    <div class="titles">
+      <div class="h1">Work Order Details</div>
+      <div class="sub">Specify the dates, name and status for this order</div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn secondary" (click)="onCancel()">Cancel</button>
+      <button type="button" class="btn primary" (click)="onSubmit()">
+        {{ mode === 'edit' ? 'Save' : 'Create' }}
+      </button>
+    </div>
+  </div>
+
+  <form class="drawer-body" [formGroup]="form">
+    <label class="field">
+      <div class="label">Work Order Name</div>
+      <input class="input" type="text" formControlName="name" placeholder="Acme Inc." />
+    </label>
+
+    <div class="field">
+      <div class="label">Status</div>
+
+      <ng-select
+        class="status-select"
+        [items]="statusOptions"
+        bindLabel="label"
+        bindValue="value"
+        [clearable]="false"
+        [searchable]="false"
+        formControlName="status">
+
+        <ng-template ng-label-tmp let-item="item">
+          <span class="pill" [attr.data-status]="item?.value">{{ item?.label }}</span>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <span class="option">{{ item.label }}</span>
+        </ng-template>
+      </ng-select>
+    </div>
+
+    
+    <div class="field">
+        <div class="label">End date</div>
+        <div class="date-input">
+            <input
+            class="input"
+            placeholder="01.01.2026"
+            formControlName="end"
+            ngbDatepicker
+            #endDp="ngbDatepicker"
+            (click)="endDp.toggle()"
+            readonly />
+            
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="label">Start date</div>
+        <div class="date-input">
+            <input
+            class="input"
+            placeholder="02.01.2026"
+            formControlName="start"
+            ngbDatepicker
+            #startDp="ngbDatepicker"
+            (click)="startDp.toggle()"
+            readonly />
+        
+        </div>
+    </div>
+
+    
+  </form>
+</div>

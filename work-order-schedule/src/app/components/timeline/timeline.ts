@@ -1,16 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, signal, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { TimescaleSelector } from '../timescale-selector/timescale-selector';
-import { Timescale } from '../../models/timeline.types';
+import { Timescale, PendingCreate } from '../../models/timeline.types';
 import { MOCKED_WORK_CENTERS, MOCKED_WORK_ORDERS } from '../../data/sample-data';
 import { buildColumnRanges, TimelineColumnRange } from '../../utils/timeline-range';
 import { getTimelinePosition } from '../../utils/timeline-position';
 import { WorkOrder } from '../../models/work-order.model';
+import { WorkOrderForm } from '../work-order-form/work-order-form';
 
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [CommonModule, TimescaleSelector],
+  imports: [CommonModule, TimescaleSelector, WorkOrderForm],
   templateUrl: './timeline.html',
   styleUrls: ['./timeline.scss'],
 })
@@ -18,12 +19,21 @@ export class Timeline implements AfterViewInit {
   // Props
   timeScale = signal<Timescale>('month');
   workCenters = MOCKED_WORK_CENTERS;
-  workOrders = MOCKED_WORK_ORDERS
+  workOrders = signal(MOCKED_WORK_ORDERS);
+  pendingCreate = signal<PendingCreate | null>(null);
   monthColumns = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   today = new Date();
 
   //hoveredWorkOrderId: string | null = null;
   openMenuWorkOrderId: string | null = null;
+  selectedWorkCenterId: string | null = null;
+
+  //Form memebers
+  formOpen = signal(false);
+  formMode = signal<'create' | 'edit'>('create');
+  editingId = signal<string | null>(null);
+  formInitial = signal<any>(null);
+
 
   // Elements
   @ViewChild('scrollElement', { static: true }) scrollElement!: ElementRef<HTMLDivElement>;
@@ -111,7 +121,7 @@ export class Timeline implements AfterViewInit {
 
     workOrdesByCenter = computed(() => {
     const map = new Map<string, typeof MOCKED_WORK_ORDERS>();
-    for(const wo of this.workOrders) {
+    for(const wo of this.workOrders()) {
       const wcId = wo.data.workCenterId;
       if(!map.has(wcId)) {
         map.set(wcId, []);
@@ -176,15 +186,200 @@ export class Timeline implements AfterViewInit {
 
   onEdit(id: string, ev: MouseEvent) {
     ev.stopPropagation();
-    console.log('Edit', id);
+    
+    const wo = this.workOrders().find(x=> x.docId === id);
+    if(!wo)
+      return;
+
+    this.formMode.set('edit');
+    this.editingId.set(id);
+
+    this.selectedWorkCenterId = wo.data.workCenterId;
+
+    this.formInitial.set({
+      name: wo.data.name,
+      status: wo.data.status,
+      start: wo.data.startDate ?? wo.data.startDate,
+      end: wo.data.endDate ?? wo.data.endDate,
+    });
+    this.formOpen.set(true);
     this.closeMenu();
+  }
+
+  openCreateDrawer(prefill?: any) {
+    this.formMode.set('create');
+    this.editingId.set(null);
+    this.formInitial.set(prefill ?? { name: '', status: 'open' });
+    this.formOpen.set(true);
   }
 
   onDelete(id: string, ev: MouseEvent) {
     ev.stopPropagation();
-    // TODO: confirm + remove
-    console.log('Delete', id);
+    
+    const wo = this.workOrders().find(x => x.docId === id);
+    if (!wo) return;
+
+    const confirmed = confirm(`Are you sure you want to delete "${wo.data.name}"? This action cannot be undone.`);
+    
+    if (confirmed) {
+      this.workOrders.set(this.workOrders().filter(w => w.docId !== id));
+      console.log('Deleted work order:', id);
+    }
+    
     this.closeMenu();
   }
+
+  onFormSubmit(v: { name: string; status: any; start?: string; end?: string }) {
+    const mode = this.formMode();
+    const editing = this.editingId();
+
+    if (v.start && v.end && v.start > v.end) {
+      alert('Start date must be before End date.');
+      return;
+    }
+
+    if (mode === 'edit' && editing) {
+      this.workOrders.set(this.workOrders().map(w =>
+        w.docId === editing
+          ? ({
+              ...w,
+              data: {
+                ...w.data,
+                name: v.name,
+                status: v.status,
+                startDate: v.start,
+                endDate: v.end,
+              },
+            } as WorkOrder)
+          : w
+      ));
+    } else {
+      
+      const wcId = this.selectedWorkCenterId ?? this.workCenters[0]?.docId;
+
+      const newId = `WO-${Math.random().toString(16).slice(2, 6)}`;
+
+      this.workOrders.set( [
+        ...this.workOrders(),
+        {
+          docId: newId,
+          docType: 'workOrder',
+          data: {
+            workCenterId: wcId,
+            name: v.name,
+            status: v.status,
+            startDate: v.start ?? '',
+            endDate: v.end ?? '',
+          },
+        } as WorkOrder,
+      ]);
+    }
+    this.selectedWorkCenterId = null;
+    this.formOpen.set(false);
+  }
+
+
+  getStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      'open': 'Open',
+      'in-progress': 'In progress',
+      'completed': 'Complete',
+      'blocked': 'Blocked'
+    };
+    return labels[status] || status;
+  }
   //#endregion
+
+  //#region Create work order
+  private normalizeRange(a: number, b: number) {
+    return a <= b ? { start: a, end: b } : { start: b, end: a };
+  }
+
+  cancelPendingCreate() {
+    this.pendingCreate.set(null);
+  }
+
+  onEmptyCellClick(workCenterId: string, colIndex: number, ev: MouseEvent) {
+    // close menu in case
+    this.closeMenu?.();
+    // avoid interfering with any other click handlers
+    ev.stopPropagation();
+
+    const existing = this.pendingCreate();
+
+    if (!existing || existing.workCenterId !== workCenterId) {
+      this.selectedWorkCenterId =workCenterId; 
+      this.pendingCreate.set({
+        workCenterId,
+        startColIndex: colIndex,
+        endColIndex: colIndex,
+      });
+      return;
+    }
+
+    const r = this.normalizeRange(existing.startColIndex, colIndex);
+    this.pendingCreate.set({
+      workCenterId,
+      startColIndex: r.start,
+      endColIndex: r.end,
+    });
+
+    this.openCreateFromPending();
+  }
+
+  pendingCreateLeftPx = computed(() => {
+    const p = this.pendingCreate();
+    if (!p) return 0;
+    return p.startColIndex * this.columnWidthPx();
+  });
+
+  pendingCreateWidthPx = computed(() => {
+    const p = this.pendingCreate();
+    if (!p) return 0;
+    const colWidth = this.columnWidthPx();
+    const spanCols = p.endColIndex - p.startColIndex + 1;
+    return spanCols * colWidth;
+  });
+
+  openCreateFromPending(ev?: MouseEvent) {
+    ev?.stopPropagation();
+
+    const p = this.pendingCreate();
+    if (!p) return;
+
+    const cols = this.columns();
+    const startCol = cols[p.startColIndex];
+    const endCol = cols[p.endColIndex];
+
+    if (!startCol || !endCol) return;
+
+    const startIso = this.toISODate(startCol.start);
+    const endIso =this.toISODate(endCol.end);
+
+    // Set selected work center for the new work order
+    this.selectedWorkCenterId = p.workCenterId;
+
+    // Open drawer in create mode with prefilled dates
+    this.formMode.set('create');
+    this.editingId.set(null);
+    this.formInitial.set({
+      name: '',
+      status: 'open',
+      start: startIso,
+      end: endIso,
+    });
+    this.formOpen.set(true);
+
+    this.pendingCreate.set(null);
+  }
+
+  toISODate(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+
+ //#endregion
 }

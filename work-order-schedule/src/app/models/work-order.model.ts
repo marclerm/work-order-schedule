@@ -1,4 +1,4 @@
-export type WorkOrderStatus = 'open' | 'in-progress' | 'completed' | 'blocked';
+import { WorkOrderStatus } from "./timeline.types";
 
 export interface WorkOrder {
     docId: string;

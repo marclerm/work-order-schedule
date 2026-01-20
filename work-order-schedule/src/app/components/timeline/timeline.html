@@ -46,52 +46,84 @@
                     <div class="row-grid"
                         [style.gridAutoColumns.px]="columnWidthPx()">
                         <div class="cell" 
-                            *ngFor="let c of columns(); trackBy: trackByColumnKey">
+                            *ngFor="let c of columns(); let i = index; trackBy: trackByColumnKey"
+                            (click)="onEmptyCellClick(workCenter.docId, i, $event)">
                         </div>
                     </div>
 
                     <!-- Draw bars from work orders  -->
                      <div class="bars">
                         <div class="bar"
-    *ngFor="let b of getWorkOrdersBarsOf(workCenter.docId)"
-    [style.left.px]="b.leftPx"
-    [style.width.px]="b.widthPx"
-    [attr.data-status]="b.wo.data.status"
-    [class.has-open-menu]="openMenuWorkOrderId === b.wo.docId"
-    title="{{b.wo.data.name}}">
-    <span class="bar-title">{{b.wo.data.name}}</span>
+                            *ngFor="let b of getWorkOrdersBarsOf(workCenter.docId)"
+                            [style.left.px]="b.leftPx"
+                            [style.width.px]="b.widthPx"
+                            [attr.data-status]="b.wo.data.status"
+                            [class.has-open-menu]="openMenuWorkOrderId === b.wo.docId"
+                            title="{{b.wo.data.name}}">
+                            <span class="bar-title">{{b.wo.data.name}}</span>
 
-    <!-- Always rendered, shown via CSS -->
-    <button
-        type="button"
-        class="bar-cta"
-        (click)="toggleMenu(b.wo.docId, $event)"
-        aria-label="Options">
-        <span class="kebab">⋮</span>
-    </button>
+                            <!-- Status label at the end of barr -->
+                            <span class="bar-status" [attr.data-status]="b.wo.data.status">
+                                {{ getStatusLabel(b.wo.data.status) }}
+                            </span>
 
-    <div 
-        class="bar-menu"
-        *ngIf="openMenuWorkOrderId === b.wo.docId"
-        (click)="onMenuClick($event)">
-        <button 
-            type="button" 
-            class="menu-item" 
-            (click)="onEdit(b.wo.docId, $event)">
-            Edit
-        </button>
+                            <!-- Button to toggle menu -->
+                            <button
+                                type="button"
+                                class="bar-cta"
+                                (click)="toggleMenu(b.wo.docId, $event)"
+                                aria-label="Options">
+                                <span class="dots-menu">...</span>
+                            </button>
 
-        <button 
-            type="button" 
-            class="menu-item is-danger" 
-            (click)="onDelete(b.wo.docId, $event)">
-            Delete
-        </button>
-    </div>
-</div>
+                            <!-- Menu items -->
+                            <div 
+                                class="bar-menu"
+                                *ngIf="openMenuWorkOrderId === b.wo.docId"
+                                (click)="onMenuClick($event)">
+                                <button 
+                                    type="button" 
+                                    class="menu-item" 
+                                    (click)="onEdit(b.wo.docId, $event)">
+                                    Edit
+                                </button>
+
+                                <button 
+                                    type="button" 
+                                    class="menu-item is-danger" 
+                                    (click)="onDelete(b.wo.docId, $event)">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
                      </div>
+
+                    <!-- Area to click to add new order -->
+                    <div
+                        class="pending-create-area"
+                        *ngIf="pendingCreate()?.workCenterId === workCenter.docId"
+                        [style.left.px]="pendingCreateLeftPx()"
+                        [style.width.px]="pendingCreateWidthPx()"
+                        (click)="openCreateFromPending($event)">
+                        
+                        <!-- Tooltip pill above -->
+                        <div class="add-dates-tooltip">
+                            Click to add dates
+                        </div>
+                        
+                        <!-- Visual indicator in the slot -->
+                        <div class="selection-highlight"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 </div>
+
+<app-work-order-form
+  [isOpen]="formOpen()"
+  [mode]="formMode()"
+  [initialValue]="formInitial()"
+  (cancel)="formOpen.set(false)"
+  (submitForm)="onFormSubmit($event)">
+</app-work-order-form>

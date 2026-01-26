@@ -127,3 +127,13 @@
   (cancel)="formOpen.set(false)"
   (submitForm)="onFormSubmit($event)">
 </app-work-order-form>
+<app-modal-dialog
+  [isOpen]="modalOpen()"
+  [type]="modalType()"
+  [title]="modalTitle()"
+  [message]="modalMessage()"
+  [confirmText]="modalConfirmText()"
+  [cancelText]="modalCancelText()"
+  (confirm)="onModalConfirm()"
+  (cancel)="onModalCancel()">
+</app-modal-dialog>

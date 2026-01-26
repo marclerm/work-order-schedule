@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
 import { Timescale } from '../../models/timeline.types';
 import { CommonModule } from '@angular/common';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, FormsModule, NgSelectModule],
   templateUrl: './timescale-selector.html',
   styleUrls: ['./timescale-selector.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class TimescaleSelector {
 

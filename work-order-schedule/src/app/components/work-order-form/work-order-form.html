@@ -43,32 +43,32 @@
 
     
     <div class="field">
-        <div class="label">End date</div>
-        <div class="date-input">
-            <input
-            class="input"
-            placeholder="01.01.2026"
-            formControlName="end"
-            ngbDatepicker
-            #endDp="ngbDatepicker"
-            (click)="endDp.toggle()"
-            readonly />
-            
-        </div>
-    </div>
-
-    <div class="field">
         <div class="label">Start date</div>
         <div class="date-input">
             <input
             class="input"
-            placeholder="02.01.2026"
+            placeholder="01.01.2026"
             formControlName="start"
             ngbDatepicker
             #startDp="ngbDatepicker"
             (click)="startDp.toggle()"
             readonly />
         
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="label">End date</div>
+        <div class="date-input">
+            <input
+            class="input"
+            placeholder="02.01.2026"
+            formControlName="end"
+            ngbDatepicker
+            #endDp="ngbDatepicker"
+            (click)="endDp.toggle()"
+            readonly />
+            
         </div>
     </div>
 

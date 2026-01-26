@@ -1,10 +1,14 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { WorkOrderStatus } from '../../models/timeline.types';
+import { WorkOrderStatus, FormInitialValue } from '../../models/timeline.types';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 
+interface StatusOption {
+  label: string;
+  value: WorkOrderStatus;
+}
 
 @Component({
   selector: 'app-work-order-form',
@@ -22,12 +26,7 @@ export class WorkOrderForm {
   @Input() isOpen = false;
   @Input() mode: 'create' | 'edit' = 'create';
 
-  @Input() initialValue?: {
-    name: string;
-    status: WorkOrderStatus;
-    start?: string;
-    end?: string;
-  }
+  @Input() initialValue?: FormInitialValue;
 
   @Output() cancel = new EventEmitter<void>();
   @Output() submitForm = new EventEmitter<{
@@ -37,9 +36,9 @@ export class WorkOrderForm {
     end?: string;
   }>();
 
-  statusOptions = [
+  statusOptions: StatusOption[] = [
     {label: 'Open', value: 'open'},
-    {label: 'In progres', value: 'in-progress'},
+    {label: 'In progress', value: 'in-progress'},
     {label: 'Completed', value: 'completed'},
     {label: 'Blocked', value: 'blocked'}
   ];

@@ -7,3 +7,18 @@ export type PendingCreate = {
   startColIndex: number;
   endColIndex: number;
 };
+
+export interface FormInitialValue {
+  name: string;
+  status: WorkOrderStatus;
+  start?: string;
+  end?: string;
+}
+
+export interface ModalState {
+  type: 'alert' | 'confirm';
+  title: string;
+  message: string;
+  confirmText: string;
+  cancelText: string;
+}

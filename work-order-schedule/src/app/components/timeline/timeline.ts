@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, signal, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { TimescaleSelector } from '../timescale-selector/timescale-selector';
-import { Timescale, PendingCreate } from '../../models/timeline.types';
+import { Timescale, PendingCreate, FormInitialValue, WorkOrderStatus } from '../../models/timeline.types';
 import { MOCKED_WORK_CENTERS, MOCKED_WORK_ORDERS } from '../../data/sample-data';
 import { buildColumnRanges, TimelineColumnRange } from '../../utils/timeline-range';
 import { getTimelinePosition } from '../../utils/timeline-position';
 import { WorkOrder } from '../../models/work-order.model';
 import { WorkOrderForm } from '../work-order-form/work-order-form';
+import { ModalDialog } from '../modal-dialog/modal-dialog';
 
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [CommonModule, TimescaleSelector, WorkOrderForm],
+  imports: [CommonModule, TimescaleSelector, WorkOrderForm, ModalDialog],
   templateUrl: './timeline.html',
   styleUrls: ['./timeline.scss'],
 })
@@ -35,8 +36,16 @@ export class Timeline implements AfterViewInit {
   formOpen = signal(false);
   formMode = signal<'create' | 'edit'>('create');
   editingId = signal<string | null>(null);
-  formInitial = signal<any>(null);
+  formInitial = signal<FormInitialValue | undefined>(undefined);
 
+  // Modal members
+  modalOpen = signal(false);
+  modalType = signal<'alert' | 'confirm'>('alert');
+  modalTitle = signal('');
+  modalMessage = signal('');
+  modalConfirmText = signal('OK');
+  modalCancelText = signal('Cancel');
+  pendingAction: (() => void) | null = null;
 
   // Elements
   @ViewChild('scrollElement', { static: true }) scrollElement!: ElementRef<HTMLDivElement>;
@@ -167,7 +176,6 @@ export class Timeline implements AfterViewInit {
   //#region Mouse and Menu handling
 
   toggleMenu(id: string, ev: MouseEvent){
-    console.log("menu toggled, id: "+ id);
     ev.stopPropagation();
     ev.preventDefault();
     this.openMenuWorkOrderId = this.openMenuWorkOrderId === id ? null : id;
@@ -209,7 +217,7 @@ export class Timeline implements AfterViewInit {
     this.closeMenu();
   }
 
-  openCreateDrawer(prefill?: any) {
+  openCreateDrawer(prefill?: FormInitialValue) {
     this.formMode.set('create');
     this.editingId.set(null);
     this.formInitial.set(prefill ?? { name: '', status: 'open' });
@@ -222,23 +230,30 @@ export class Timeline implements AfterViewInit {
     const wo = this.workOrders().find(x => x.docId === id);
     if (!wo) return;
 
-    const confirmed = confirm(`Are you sure you want to delete "${wo.data.name}"? This action cannot be undone.`);
-    
-    if (confirmed) {
+    this.modalType.set('confirm');
+    this.modalTitle.set('Delete Work Order');
+    this.modalMessage.set(`Are you sure you want to delete "${wo.data.name}"? This action cannot be undone.`);
+    this.modalConfirmText.set('Delete');
+    this.modalCancelText.set('Cancel');
+    this.pendingAction = () => {
       this.workOrders.set(this.workOrders().filter(w => w.docId !== id));
-      console.log('Deleted work order:', id);
-    }
-    
+    };
+    this.modalOpen.set(true);
     this.closeMenu();
   }
 
   // @upgrade maybe create recurrent work orders daily, weekly or monthly
-  onFormSubmit(v: { name: string; status: any; start?: string; end?: string }) {
+  onFormSubmit(v: { name: string; status: WorkOrderStatus; start?: string; end?: string }) {
     const mode = this.formMode();
     const editing = this.editingId();
 
     if (v.start && v.end && v.start > v.end) {
-      alert('Start date must be before End date.');
+      this.modalType.set('alert');
+      this.modalTitle.set('Invalid Dates');
+      this.modalMessage.set('Start date must be before End date.');
+      this.modalConfirmText.set('OK');
+      this.pendingAction = null;
+      this.modalOpen.set(true);
       return;
     }
 
@@ -252,13 +267,18 @@ export class Timeline implements AfterViewInit {
     );
 
     if (conflict) {
-      alert(
+      this.modalType.set('alert');
+      this.modalTitle.set('Date Conflict');
+      this.modalMessage.set(
         `Date conflict detected!\n\n` +
         `The selected dates overlap with:\n` +
         `"${conflict.data.name}"\n` +
         `(${conflict.data.startDate} to ${conflict.data.endDate})\n\n` +
         `Please adjust the dates to resolve the conflict.`
       );
+      this.modalConfirmText.set('OK');
+      this.pendingAction = null;
+      this.modalOpen.set(true);
       return;
     }
 
@@ -278,7 +298,6 @@ export class Timeline implements AfterViewInit {
           : w
       ));
     } else {
-      
       
 
       const newId = `WO-${Math.random().toString(16).slice(2, 6)}`;
@@ -414,7 +433,7 @@ export class Timeline implements AfterViewInit {
     this.editingId.set(null);
     this.formInitial.set({
       name: '',
-      status: 'open',
+      status: 'open' as WorkOrderStatus,
       start: startIso,
       end: endIso,
     });
@@ -430,6 +449,18 @@ export class Timeline implements AfterViewInit {
     return `${y}-${m}-${day}`;
   }
 
+  onModalConfirm(): void {
+    if (this.pendingAction) {
+      this.pendingAction();
+    }
+    this.modalOpen.set(false);
+    this.pendingAction = null;
+  }
+
+  onModalCancel(): void {
+    this.modalOpen.set(false);
+    this.pendingAction = null;
+  }
 
  //#endregion
 }
